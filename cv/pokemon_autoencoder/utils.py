@@ -83,7 +83,7 @@ class PokemonDataset(Dataset):
         normal_tensor = self.normal_transform(image)
         patchy_tensor = self.patchy_transform(image)
 
-        return normal_tensor, patchy_tensor
+        return patchy_tensor, normal_tensor
 
     # Iterable dataset problem:
     # def __iter__(self):
@@ -99,7 +99,7 @@ class PokemonDataset(Dataset):
     #     normal_tensor = self.normal_transform(image)
     #     patchy_tensor = self.patchy_transform(image)
 
-    #     return normal_tensor, patchy_tensor  
+    #     return patchy_tensor, normal_tensor
 
 
 class Interpolate(nn.Module):

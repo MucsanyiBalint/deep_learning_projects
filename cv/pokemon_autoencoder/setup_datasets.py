@@ -64,7 +64,7 @@ def get_datasets():
     patchy_transform = Compose([
         transforms.Resize((100, 75)),
         transforms.ToTensor(),
-        RandomCut((5, 10), (10, 15), 5),  # h: 330, w: 240
+        RandomCut((10, 15), (15, 15), 5),  # h: 330, w: 240
     ])
 
     train_dataset = PokemonDataset(
@@ -72,7 +72,7 @@ def get_datasets():
         patchy_transform,
         'train_dataset',
     )
-    train_dl = DataLoader(train_dataset, 32, shuffle=True)
+    train_dl = DataLoader(train_dataset, 64, shuffle=True)
 
     val_dataset = PokemonDataset(
         normal_transform,
@@ -86,7 +86,7 @@ def get_datasets():
         patchy_transform,
         'test_dataset',
     )
-    test_dl = DataLoader(test_dataset, 4)
+    test_dl = DataLoader(test_dataset, 16)
 
     return train_dl, val_dl, test_dl
 
