@@ -13,69 +13,64 @@ class PokemonAutoencoder(nn.Module):
         super().__init__()
 
         # (3, 240, 330)
-
         self.encoder = nn.Sequential(
             nn.Conv2d(
                 in_channels=channels,
                 out_channels=32,
                 kernel_size=7,
-                stride=2,
                 padding=3,
-            ),  # 32, 120, 165
+            ),  # 32, 240, 330
             nn.ReLU(inplace=True),
             nn.MaxPool2d(
-                kernel_size=3,
-                stride=2,
-                padding=1,
-            ),  # 32, 60, 83
+                kernel_size=4,
+                stride=4,
+            ),  # 32, 60, 82
             nn.Conv2d(
                 in_channels=32,
                 out_channels=64,
-                kernel_size=7,
-                padding=3,
-            ),  # 64, 60, 83
+                kernel_size=3,
+                padding=1,
+            ),  # 64, 60, 82
             nn.ReLU(inplace=True),
             nn.MaxPool2d(
-                kernel_size=3,
-                stride=1,
-                padding=1,
-            ),  # 64, 60, 83
+                kernel_size=6,
+                stride=6,
+            ),  # 64, 10, 13
             nn.Conv2d(
                 in_channels=64,
-                out_channels=64,
-                kernel_size=7,
-                padding=3,
-            ),  # 64, 60, 83
+                out_channels=128,
+                kernel_size=3,
+                padding=1,
+            ),  # 128, 10, 13
             nn.ReLU(inplace=True),
             nn.MaxPool2d(
-                kernel_size=3,
-                stride=1,
-                padding=1,
-            ),  # 64, 60, 83
+                kernel_size=(13, 10),
+            ),  # 128, 1, 1
         )
 
         self.decoder = nn.Sequential(
+            Interpolate(scale_factor=(13, 10)),  # 128, 10, 13
             nn.ConvTranspose2d(
-                in_channels=64,
+                in_channels=128,
                 out_channels=64,
-                kernel_size=7,
-                padding=3,
-            ),  # 64, 60, 83
+                kernel_size=3,
+                padding=1,
+            ),  # 64, 10, 13
             nn.ReLU(inplace=True),
+            Interpolate(size=(82, 60)),  # 64, 60, 82
             nn.ConvTranspose2d(
                 in_channels=64,
                 out_channels=32,
-                kernel_size=7,
-                stride=2,
-                padding=3,
-            ),  # 32, 119, 165
+                kernel_size=3,
+                padding=1,
+            ),  # 32, 60, 82
             nn.ReLU(inplace=True),
+            Interpolate(size=(330, 240)),  # 32, 240, 330
             nn.ConvTranspose2d(
                 in_channels=32,
                 out_channels=channels,
-                kernel_size=6,
-                stride=2,
-                padding=(2, 1),
+                kernel_size=7,
+                padding=3,
             ),  # 3, 240, 330
             nn.Sigmoid(),
         )
@@ -114,94 +109,47 @@ class PokemonAutoencoder(nn.Module):
         return loss / counter
 
 
-class PokemonAutoencoderLarge(nn.Module):
+class ResizedPokemonAutoencoder(nn.Module):
     def __init__(self, channels):
         super().__init__()
 
-        # (3, 240, 330)
-
+        # (3, 75, 100)
         self.encoder = nn.Sequential(
             nn.Conv2d(
                 in_channels=channels,
                 out_channels=32,
                 kernel_size=7,
-                stride=2,
                 padding=3,
-            ),  # 32, 120, 165
+            ),  # 32, 75, 100
             nn.ReLU(inplace=True),
             nn.MaxPool2d(
-                kernel_size=3,
-                stride=2,
-                padding=1,
-            ),  # 32, 60, 83
+                kernel_size=4,
+                stride=4,
+            ),  # 32, 18, 25
             nn.Conv2d(
                 in_channels=32,
                 out_channels=64,
-                kernel_size=7,
-                padding=3,
-            ),  # 64, 60, 83
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(
                 kernel_size=3,
-                stride=1,
                 padding=1,
-            ),  # 64, 60, 83
-            nn.Conv2d(
-                in_channels=64,
-                out_channels=128,
-                kernel_size=7,
-                padding=3,
-            ),  # 128, 60, 83
+            ),  # 64, 18, 25
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(
-                kernel_size=3,
-                stride=1,
-                padding=1,
-            ),  # 128, 60, 83
-            nn.Conv2d(
-                in_channels=128,
-                out_channels=128,
-                kernel_size=7,
-                padding=3,
-            ),  # 128, 60, 83
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(
-                kernel_size=3,
-                stride=1,
-                padding=1,
-            ),  # 128, 60, 83
         )
 
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(
-                in_channels=128,
-                out_channels=128,
-                kernel_size=7,
-                padding=3,
-            ),  # 64, 60, 83
-            nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(
-                in_channels=128,
-                out_channels=64,
-                kernel_size=7,
-                stride=2,
-                padding=3,
-            ),  # 64, 119, 165
-            nn.ReLU(inplace=True),
-            nn.ConvTranspose2d(
                 in_channels=64,
                 out_channels=32,
-                kernel_size=7,
-                padding=3,
-            ),  # 32, 119, 165
+                kernel_size=3,
+                padding=1,
+            ),  # 32, 18, 25
             nn.ReLU(inplace=True),
+            Interpolate(size=(100, 75)),  # 32, 75, 100
             nn.ConvTranspose2d(
                 in_channels=32,
                 out_channels=channels,
-                kernel_size=6,
-                stride=2,
-                padding=(2, 1),
-            ),  # 3, 240, 330
+                kernel_size=3,
+                padding=1,
+            ),  # 3, 75, 100
             nn.Sigmoid(),
         )
 
@@ -242,10 +190,10 @@ class PokemonAutoencoderLarge(nn.Module):
 if __name__ == "__main__":
     from setup_datasets import get_datasets
 
-    model = PokemonAutoencoder(3)
+    model = ResizedPokemonAutoencoder(3)
     train_dl, val_dl, test_dl = get_datasets()
-    epochs = 20
-    optimizer = torch.optim.Adam(model.parameters())
+    epochs = 100
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
     loss_func = nn.MSELoss()
 
     model.fit(train_dl, val_dl, epochs, optimizer, loss_func)
@@ -254,31 +202,3 @@ if __name__ == "__main__":
     print('Test loss:', test_loss.item())
 
     torch.save(model.state_dict(), 'models/model.pt')
-
-"""
-self.decoder = nn.Sequential(
-    nn.Conv2d(
-        in_channels=64,
-        out_channels=64,
-        kernel_size=7,
-        padding=3,
-    ),  # 64, 60, 83
-    nn.ReLU(inplace=True),
-    Interpolate(scale_factor=2),  # 64, 120, 166
-    nn.Conv2d(
-        in_channels=64,
-        out_channels=32,
-        kernel_size=(6, 7),
-        padding=(2, 3),
-    ),  # 32, 120, 165
-    nn.ReLU(inplace=True),
-    Interpolate(scale_factor=2),  # 32, 240, 330
-    nn.Conv2d(
-        in_channels=32,
-        out_channels=channels,
-        kernel_size=7,
-        padding=3,
-    ),  # 3, 240, 330
-    nn.Sigmoid(),
-)
-"""

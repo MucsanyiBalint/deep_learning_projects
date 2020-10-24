@@ -57,14 +57,14 @@ def get_datasets():
         function.
     """
     normal_transform = Compose([
+        transforms.Resize((100, 75)),
         transforms.ToTensor(),
-        # transforms.Resize(200, 200)
     ])
 
     patchy_transform = Compose([
+        transforms.Resize((100, 75)),
         transforms.ToTensor(),
-        # transforms.Resize(200, 200)
-        RandomCut((25, 30), (30, 35), 6)  # h: 330, w: 240
+        RandomCut((5, 10), (10, 15), 5),  # h: 330, w: 240
     ])
 
     train_dataset = PokemonDataset(

@@ -17,7 +17,7 @@ def print_bar(title, pct, width=50):
 
 
 def show_image(tensor):
-    image = transforms.ToPILImage()(tensor)
+    image = transforms.ToPILImage()(tensor).resize((240, 330))
     image.show()
 
 
@@ -104,12 +104,13 @@ class PokemonDataset(Dataset):
 
 class Interpolate(nn.Module):
     """Wrapper class around F.interpolate to be used in a Sequential Module."""
-    def __init__(self, scale_factor):
+    def __init__(self, size=None, scale_factor=None):
         super(Interpolate, self).__init__()
         self.interp = F.interpolate
+        self.size = size
         self.scale_factor = scale_factor
         self.mode = 'nearest'
         
     def forward(self, x):
-        x = self.interp(x, scale_factor=self.scale_factor, mode=self.mode)
+        x = self.interp(x, size=self.size, scale_factor=self.scale_factor, mode=self.mode)
         return x
