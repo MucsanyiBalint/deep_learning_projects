@@ -75,7 +75,7 @@ class PokemonAutoencoder(nn.Module):
             nn.Sigmoid(),
         )
 
-    def __call__(self, tensor):
+    def call(self, tensor):
         x = self.encoder(tensor)
         x = self.decoder(x)
         return x
@@ -153,7 +153,7 @@ class ResizedPokemonAutoencoder(nn.Module):
             nn.Sigmoid(),
         )
 
-    def __call__(self, tensor):
+    def call(self, tensor):
         x = self.encoder(tensor)
         x = self.decoder(x)
         return x
