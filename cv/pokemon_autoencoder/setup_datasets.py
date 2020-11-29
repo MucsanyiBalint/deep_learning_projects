@@ -49,9 +49,10 @@ def _distribute_images(split=(0.7, 0.2, 0.1)):
     os.rmdir('images')
     os.mkdir('models')
 
+
 def get_datasets():
     """Returns train, validation and test datasets.
-    
+
     Usage:
         First run get_dataset.py, then import the get_datasets()
         function.

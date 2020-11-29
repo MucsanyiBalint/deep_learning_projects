@@ -47,16 +47,15 @@ class RandomCut:
             height = randint(self.min_cut_size[1], self.max_cut_size[1])
             width_start = randint(0, tensor.size()[-1] - width)
             height_start = randint(0, tensor.size()[-2] - height)
-            tensor_copy[
-                ...,
-                height_start:height_start + height,
-                width_start:width_start + width,
-            ] = 0  # blacks out window
+            tensor_copy[..., height_start:height_start + height,
+                        width_start:width_start +
+                        width, ] = 0  # blacks out window
         return tensor_copy
 
     def __repr__(self):
-        return (f'{self.__class__}({self.min_cut_size=}, {self.max_cut_size=}, '
-                f'{self.cut_num=})')
+        return (
+            f'{self.__class__}({self.min_cut_size=}, {self.max_cut_size=}, '
+            f'{self.cut_num=})')
 
 
 class PokemonDataset(Dataset):
@@ -75,7 +74,7 @@ class PokemonDataset(Dataset):
 
     def __getitem__(self, index):
         """Return item at index.
-        
+
         Doesn't check the validity of index, as DataLoader takes chare of that.
         """
         file_name = self.files[index]
@@ -110,7 +109,10 @@ class Interpolate(nn.Module):
         self.size = size
         self.scale_factor = scale_factor
         self.mode = 'nearest'
-        
+
     def forward(self, x):
-        x = self.interp(x, size=self.size, scale_factor=self.scale_factor, mode=self.mode)
+        x = self.interp(x,
+                        size=self.size,
+                        scale_factor=self.scale_factor,
+                        mode=self.mode)
         return x
